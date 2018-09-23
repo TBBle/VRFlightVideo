@@ -24,8 +24,8 @@ target_link_libraries(native_app_glue PRIVATE log)
 # pull any symbols from the library. See https://github.com/android-ndk/ndk/issues/381#issuecomment-309662037
 target_link_libraries(native_app_glue INTERFACE "-Wl,-u,ANativeActivity_onCreate")
 
-# native_activity - our main library
-add_library(native_activity SHARED
+# main - our (imaginatively named) main library
+add_library(main SHARED
     src/main/cpp/main.cpp
 )
-target_link_libraries(native_activity PRIVATE native_app_glue)
+target_link_libraries(main PRIVATE native_app_glue)
