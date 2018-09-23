@@ -38,6 +38,10 @@ set(NATIVE_APP_GLUE_PATH "${ANDROID_NDK}/sources/android/native_app_glue/")
 
 add_library(native_app_glue STATIC ${NATIVE_APP_GLUE_PATH}/android_native_app_glue.c)
 target_include_directories(native_app_glue INTERFACE ${NATIVE_APP_GLUE_PATH})
+target_link_libraries(native_app_glue INTERFACE android)
+# Ensure that ANativeActivity_onCreate is referenced, or the linker will not
+# pull any symbols from the library. See https://github.com/android-ndk/ndk/issues/381#issuecomment-309662037
+target_link_libraries(native_app_glue INTERFACE "-Wl,-u,ANativeActivity_onCreate")
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
