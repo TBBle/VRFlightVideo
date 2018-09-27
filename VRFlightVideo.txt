@@ -1,0 +1,36 @@
+Notes:
+
+*** Would VS2017's Android support be less-awful than Android Studio?
+
+VR renders into a texture (or texture array in multiview) as a frame buffer output
+
+AMediaCodec writes to a NativeWindow
+
+ANativeWindow_fromSurface turns jobject surface into a NativeWindow
+
+Can I get my NativeWindow or surface without Java? The native-codec sample passes it through from Java.
+
+In Java, `Surface(SurfaceTexture)`, and `SurfaceTexture(int glTex)`.
+
+See https://source.android.com/devices/graphics/arch-st for details
+
+Need API 28 for ASurfaceTexture_acquireANativeWindow and ASurfaceTexture_updateTexImage... That's Android 9, I'm on Android 8 (API 26).
+
+And still can't *create* the ASurfaceTexture?
+
+So... options:
+* Wait for Android 9 on my phone
+* Code in Java to create the SurfaceTexture and Surface, and do the binding to contexts as necessary.
+
+
+=========
+
+Rough flow:
+
+MediaExtractor reads samples (video, audio, subtitles) from a media file. We put the video samples into MediaCodec, which is outputting to a Surface (ANativeWindow in C++). We use the SurfaceTexture which the Surface was created from, call SurfaceTexture.updateTexImage and getTransformMatrix to bind the current image to GL_TEXTURE_EXTERNAL_OES, and then use getTimestamp to know when to present it.
+
+Alternatively, we jump call updateTexImage at displayFPS, and use getTimeStamp to report the video timestamp we're showing, and to decide which audio/subtitles to render.
+
+Not sure how audio works here...
+
+TODO: Should I do this all in Java first? I think the VR stuff needs to be in C++.
